@@ -1,0 +1,68 @@
+@prefix bvi: <http://example.org/bvi/onto#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix o: <http://omeka.org/s/vocabs/o#> .
+
+<http://example.org/bvi/onto#> a owl:Ontology ;
+    dcterms:title "Bibliothèque Vocale Intelligente (BVI) Vocabulary"@fr ;
+    dcterms:description "Vocabulaire pour le projet de M2 THYP de Bibliothèque Vocale Intelligente."@fr ;
+    dcterms:creator "Kamli Mohamed" .
+
+# CLASSES 
+# La classe "Livre" est alignée sur schema:Book
+bvi:Livre a rdfs:Class ;
+    rdfs:label "Livre"@fr ;
+    rdfs:comment "Un livre dans la bibliothèque."@fr ;
+    rdfs:domain o:Resource ;
+    owl:equivalentClass schema:Book ;
+    vs:term_status "experimental" .
+
+# La classe "Auteur" est alignée sur schema:Person
+bvi:Auteur a rdfs:Class ;
+    rdfs:label "Auteur"@fr ;
+    rdfs:comment "Un auteur de livre."@fr ;
+    rdfs:domain o:Resource ;
+    owl:equivalentClass schema:Person ;
+    vs:term_status "experimental" .
+
+# La classe "Thème" est alignée sur skos:Concept
+bvi:Theme a rdfs:Class ;
+    rdfs:label "Thème"@fr ;
+    rdfs:comment "Un sujet ou thème de livre."@fr ;
+    rdfs:domain o:Resource ;
+    owl:equivalentClass skos:Concept ;
+    vs:term_status "experimental" .
+
+# Classe pour journaliser les recherches
+bvi:RechercheUtilisateur a rdfs:Class ;
+    rdfs:label "Recherche Utilisateur"@fr ;
+    rdfs:comment "Journalisation d'une requête de recherche (texte ou voix)."@fr ;
+    rdfs:domain o:Resource ;
+    vs:term_status "experimental" .
+
+# PROPRIÉTÉS 
+# Propriétés pour la journalisation des recherches
+bvi:termeRecherche a rdf:Property ;
+    rdfs:label "Terme recherché"@fr ;
+    rdfs:domain bvi:RechercheUtilisateur ;
+    rdfs:range rdfs:Literal ;
+    vs:term_status "experimental" .
+
+bvi:sourceRecherche a rdf:Property ;
+    rdfs:label "Source de la recherche"@fr ;
+    rdfs:comment "Indique si la recherche provient de la 'voix' ou du 'texte'."@fr ;
+    rdfs:domain bvi:RechercheUtilisateur ;
+    rdfs:range rdfs:Literal ;
+    vs:term_status "experimental" .
+
+bvi:confianceScore a rdf:Property ;
+    rdfs:label "Score de confiance (voix)"@fr ;
+    rdfs:comment "Score de confiance de l'API Web Speech."@fr ;
+    rdfs:domain bvi:RechercheUtilisateur ;
+    rdfs:range rdfs:Literal ; 
+    vs:term_status "experimental" .
