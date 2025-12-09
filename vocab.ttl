@@ -1,0 +1,107 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix o: <http://omeka.org/s/vocabs/o#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix schema: <http://schema.org/> .
+
+
+@prefix eva: <https://raw.githubusercontent.com/simohamedK/EXAM_THYP_25-26/main/vocab.ttl#> .
+
+# Déclaration de l'ontologie
+<https://raw.githubusercontent.com/simohamedK/EXAM_THYP_25-26/main/vocab.ttl#> a owl:Ontology ;
+    dcterms:title "Vocabulaire d'Évaluation Master"@fr ;
+    dcterms:description "Vocabulaire pour gérer les notes et évaluations des étudiants en Master."@fr .
+
+#(Classes)
+
+eva:Etudiant a rdfs:Class ;
+    rdfs:label "Étudiant"@fr ;
+    rdfs:comment "Une personne inscrite dans le cursus Master."@fr ;
+    rdfs:subClassOf foaf:Person ;
+    vs:term_status "experimental" .
+
+eva:Enseignant a rdfs:Class ;
+    rdfs:label "Enseignant"@fr ;
+    rdfs:comment "La personne qui dispense le cours et note l'évaluation."@fr ;
+    rdfs:subClassOf foaf:Person ;
+    vs:term_status "experimental" .
+
+eva:Cours a rdfs:Class ;
+    rdfs:label "Cours"@fr ;
+    rdfs:comment "Une unité d'enseignement (UE) ou une matière (ex: Web Sémantique, PHP)."@fr ;
+    owl:equivalentClass schema:Course ;
+    vs:term_status "experimental" .
+
+eva:Evaluation a rdfs:Class ;
+    rdfs:label "Évaluation"@fr ;
+    rdfs:comment "L'événement d'évaluation (ex: Examen final, Projet de groupe, Oral)."@fr ;
+    vs:term_status "experimental" .
+
+eva:Resultat a rdfs:Class ;
+    rdfs:label "Résultat"@fr ;
+    rdfs:comment "La performance d'un étudiant à une évaluation spécifique (la copie)."@fr ;
+    vs:term_status "experimental" .
+
+#   (Properties)
+
+# Propriétés liées au Cours
+eva:codeApogee a rdf:Property ;
+    rdfs:label "Code Apogée"@fr ;
+    rdfs:comment "Identifiant administratif du cours."@fr ;
+    rdfs:domain eva:Cours ;
+    rdfs:range rdfs:Literal .
+
+eva:semestre a rdf:Property ;
+    rdfs:label "Semestre"@fr ;
+    rdfs:comment "Le semestre du cours (ex: S1, S2)."@fr ;
+    rdfs:domain eva:Cours ;
+    rdfs:range rdfs:Literal .
+
+# Propriétés liées à l'Évaluation
+eva:coefficient a rdf:Property ;
+    rdfs:label "Coefficient"@fr ;
+    rdfs:comment "Le poids de l'évaluation dans la moyenne."@fr ;
+    rdfs:domain eva:Evaluation ;
+    rdfs:range rdfs:Literal .
+
+eva:dateExamen a rdf:Property ;
+    rdfs:label "Date de l'examen"@fr ;
+    rdfs:domain eva:Evaluation ;
+    rdfs:range rdfs:Literal .
+
+# Propriétés liées au Résultat (La note de l'étudiant)
+eva:noteObtenue a rdf:Property ;
+    rdfs:label "Note obtenue"@fr ;
+    rdfs:comment "La note chiffrée (ex: 15/20)."@fr ;
+    rdfs:domain eva:Resultat ;
+    rdfs:range rdfs:Literal .
+
+eva:appreciation a rdf:Property ;
+    rdfs:label "Appréciation"@fr ;
+    rdfs:comment "Commentaire textuel de l'enseignant sur la copie."@fr ;
+    rdfs:domain eva:Resultat ;
+    rdfs:range rdfs:Literal .
+
+# Propriétés de relation (Liens entre les classes)
+eva:aPourEtudiant a rdf:Property ;
+    rdfs:label "A pour étudiant"@fr ;
+    rdfs:domain eva:Resultat ;
+    rdfs:range eva:Etudiant .
+
+eva:aPourEvaluation a rdf:Property ;
+    rdfs:label "Concerne l'évaluation"@fr ;
+    rdfs:domain eva:Resultat ;
+    rdfs:range eva:Evaluation .
+
+eva:estLieAuCours a rdf:Property ;
+    rdfs:label "Est lié au cours"@fr ;
+    rdfs:domain eva:Evaluation ;
+    rdfs:range eva:Cours .
+
+eva:estCorrigePar a rdf:Property ;
+    rdfs:label "Est corrigé par"@fr ;
+    rdfs:domain eva:Resultat ;
+    rdfs:range eva:Enseignant .
