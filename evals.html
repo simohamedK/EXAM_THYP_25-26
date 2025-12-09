@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Évaluations</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>📝 Gestion des Évaluations</h1>
+
+        <div class="card p-4 mb-4">
+            <h3>Ajouter une note</h3>
+            <div class="mb-2">
+                <label>Note (/20) :</label>
+                <input type="number" id="inputNote" class="form-control">
+            </div>
+            <div class="mb-2">
+                <label>ID de l'Étudiant (Omeka ID) :</label>
+                <input type="number" id="inputEtudiantId" class="form-control" placeholder="Ex: 45">
+            </div>
+            <div class="mb-2">
+                <label>ID du Cours (Omeka ID) :</label>
+                <input type="number" id="inputCoursId" class="form-control" placeholder="Ex: 42">
+            </div>
+            <button onclick="setEval()" class="btn btn-primary">Enregistrer l'évaluation</button>
+            <div id="msg" class="mt-2"></div>
+        </div>
+
+        <h3>Liste des Évaluations</h3>
+        <table class="table table-striped">
+            <thead><tr><th>ID</th><th>Note</th><th>Étudiant (ID)</th><th>Cours (ID)</th></tr></thead>
+            <tbody id="tableEvals"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const API_URL = "http://localhost/omk_THyp_25-26_clone/api/";
+        const KEY_IDENTITY = "UcaPLGhLpqgqCrx0izIfHyJW4jEwee7C"; 
+        const KEY_CREDENTIAL = "Xs4Bp5M6LG8DFa1tAGUMfgCJK239lYjy";
+
+        // IDs
+        const ID_CLASS_RESULTAT = 1064; 
+        const ID_TEMPLATE_RESULTAT = 9; 
+        
+        const PROP_NOTE = 1774;      // ID prop eva:noteObtenue
+        const PROP_ETUDIANT = 1776;  // ID prop eva:aPourEtudiant
+        const PROP_COURS = 1778;     // ID prop eva:estLieAuCours
+
+        //Fonction setEval
+        async function setEval() {
+            const note = document.getElementById('inputNote').value;
+            const etuId = document.getElementById('inputEtudiantId').value;
+            const coursId = document.getElementById('inputCoursId').value;
+
+            const data = {
+                "o:resource_template": { "o:id": ID_TEMPLATE_RESULTAT },
+                "o:resource_class": { "o:id": ID_CLASS_RESULTAT },
+                "dcterms:title": [{ "type": "literal", "@value": `Note: ${note}/20` }],
+                
+                // Note (Littéral)
+                [`eva:noteObtenue`]: [{ "type": "literal", "property_id": PROP_NOTE, "@value": note }],
+                
+                // Liens vers les ressources (Etudiant et Cours)
+                [`eva:aPourEtudiant`]: [{ "type": "resource", "property_id": PROP_ETUDIANT, "value_resource_id": etuId }],
+                [`eva:estLieAuCours`]: [{ "type": "resource", "property_id": PROP_COURS, "value_resource_id": coursId }]
+            };
+
+           
+            const url = `${API_URL}items?key_identity=${KEY_IDENTITY}&key_credential=${KEY_CREDENTIAL}`;
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                if(response.ok) {
+                    document.getElementById('msg').innerText = "Succès !";
+                    showEval(); // Rafraîchir la liste
+                } else {
+                    document.getElementById('msg').innerText = "Erreur.";
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        //Fonction showEval
+        function showEval() {
+            const url = `${API_URL}items?resource_class_id=${ID_CLASS_RESULTAT}`;
+            d3.json(url).then(data => {
+                const tbody = d3.select("#tableEvals");
+                tbody.html("");
+                
+                data.forEach(item => {
+                    const id = item['o:id'];
+                    // Récupération sécurisée des valeurs
+                    const note = item['eva:noteObtenue'] ? item['eva:noteObtenue'][0]['@value'] : "-";
+                    const etu = item['eva:aPourEtudiant'] ? item['eva:aPourEtudiant'][0]['value_resource_id'] : "-";
+                    const cours = item['eva:estLieAuCours'] ? item['eva:estLieAuCours'][0]['value_resource_id'] : "-";
+
+                    tbody.append("tr").html(`
+                        <td>${id}</td>
+                        <td>${note}</td>
+                        <td>${etu}</td>
+                        <td>${cours}</td>
+                    `);
+                });
+            });
+        }
+
+        // Lancement
+        showEval();
+    </script>
+</body>
+</html>
