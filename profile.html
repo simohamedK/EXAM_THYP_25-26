@@ -1,0 +1,57 @@
+<h2>Mon Profil</h2>
+
+<div *ngIf="isLoading" class="text-center">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Chargement...</span>
+  </div>
+</div>
+
+<div *ngIf="!isLoading && user" class="row justify-content-center">
+  <div class="col-md-8">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      
+      <div class="mb-3">
+        <label for="nameInput" class="form-label">Nom</label>
+        <input id="nameInput" type="text" class="form-control" formControlName="name">
+      </div>
+      
+      <div class="mb-3">
+        <label for="emailInput" class="form-label">Email (non modifiable)</label>
+        <input id="emailInput" type="email" class="form-control" formControlName="email">
+      </div>
+      
+      <div class="mb-3">
+        <label for="objectifSelect" class="form-label">Mon Objectif</label>
+        <select id="objectifSelect" class="form-select" formControlName="objectif">
+          <option [ngValue]="null">Choisir...</option>
+          <option *ngFor="let o of objectifs" [value]="o">{{ o | titlecase }}</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="niveauSelect" class="form-label">Mon Niveau</label>
+        <select id="niveauSelect" class="form-select" formControlName="niveau">
+          <option [ngValue]="null">Choisir...</option>
+          <option *ngFor="let n of niveaux" [value]="n">{{ n | titlecase }}</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="poidsInput" class="form-label">Poids (kg)</label>
+          <input id="poidsInput" type="number" class="form-control" formControlName="poids">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="tailleInput" class="form-label">Taille (cm)</label>
+          <input id="tailleInput" type="number" class="form-control" formControlName="taille">
+        </div>
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">Mettre à jour</button>
+    </form>
+  </div>
+</div>
